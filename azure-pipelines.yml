@@ -1,12 +1,9 @@
-# C44EsfLCim6gAfkHZEND0NDQPqJUGs9sXFIXcKPTpCTatlzqFlLaJQQJ99BDACAAAAAAAAAAAAASAZDOVHrS
-
 trigger:
 - '*'
 #- main
 
 pool:
   name: 'Default'
-    #vmImage: ubuntu-latest
     
 variables:
     buildConfiguration: 'Release'
@@ -32,17 +29,22 @@ steps:
         npm install
       displayName: 'Use Node.js 16, verify version, try to install npm packages, compile sass assets'
 
+    # list current directory and node_modules/.bin directory
     - script: |
         ls
         ls -la ./node_modules/.bin
       displayName: 'List current and node_modules/.bin directory'
 
+    # ensure node 16 to use build node-sass
     - script: |
         export NVM_DIR="$HOME/.nvm"
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
         nvm use 16
         ./node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot
       displayName: 'Compile SASS assets'
+
+    - task: gulp@1
+      displayName: 'Run gulp tasks'
 
     - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
       displayName: 'Write build info into file'
