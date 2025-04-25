@@ -18,6 +18,9 @@ steps:
         packageType: sdk
         version: '6.x'
 
+    - script: 'rm -rf node_modules package-lock.json'
+      displayName: 'Remove node_modules and package-lock.json'
+
     - script: |
         export NVM_DIR="$HOME/.nvm"
         [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
@@ -37,9 +40,6 @@ steps:
         which node
         which npm
       displayName: 'Debug Node.js Environment'
-
-    - script: 'rm -rf node_modules package-lock.json'
-      displayName: 'Remove node_modules and package-lock.json'
 
     # - task: Npm@1
     #   displayName: 'Run npm install'
