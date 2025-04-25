@@ -29,6 +29,7 @@ steps:
       npm -v
       rm -rf node_modules package-lock.json
       npm cache clean --force
+      export PYTHON=/opt/homebrew/bin/python3.11
       npm install
     displayName: 'Setup Node.js 16 and install dependencies'
 
