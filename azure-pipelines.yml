@@ -30,16 +30,11 @@ steps:
         npm cache clean --force
         export PYTHON=/opt/homebrew/bin/python3.11
         npm install
-      displayName: 'Use Node.js 16 and verify version and try to install npm packages'
+        './node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot'
+      displayName: 'Use Node.js 16, verify version, try to install npm packages, compile sass assets'
 
-    - script: |
-        echo "Current PATH:"
-        echo $PATH
-        which node
-        which npm
-        python3 --version
-        which python3
-      displayName: 'Debug Environment'
+    - task: gulp@1
+      displayName: 'Run gulp tasks'
 
     - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
       displayName: 'Write build info into file'
