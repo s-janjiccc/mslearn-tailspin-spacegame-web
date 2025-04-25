@@ -28,7 +28,8 @@ steps:
         node -v
         echo "NPM version:"
         npm -v
-      displayName: 'Use Node.js 16 and verify version'
+        npm install
+      displayName: 'Use Node.js 16 and run npm install'
 
     - script: |
         echo "Current PATH:"
@@ -40,16 +41,10 @@ steps:
     - script: 'rm -rf node_modules package-lock.json'
       displayName: 'Remove node_modules and package-lock.json'
 
-    - task: Npm@1
-      displayName: 'Run npm install'
-      inputs:
-        verbose: false
-
-    # - script: './node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot'
-    #   displayName: 'Compile Sass assets'
-
-    # - task: gulp@1
-    #   displayName: 'Run gulp tasks'
+    # - task: Npm@1
+    #   displayName: 'Run npm install'
+    #   inputs:
+    #     verbose: false
 
     - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
       displayName: 'Write build info into file'
