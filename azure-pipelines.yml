@@ -1,7 +1,8 @@
 # C44EsfLCim6gAfkHZEND0NDQPqJUGs9sXFIXcKPTpCTatlzqFlLaJQQJ99BDACAAAAAAAAAAAAASAZDOVHrS
 
 trigger:
-- main
+- '*'
+#- main
 
 pool:
     vmImage: ubuntu-latest
