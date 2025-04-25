@@ -36,11 +36,13 @@ steps:
         ls
         ls -la ./node_modules/.bin
       displayName: 'List current and node_modules/.bin directory'
-      
-    # - script: |
-    #     pwd
-    #     './node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot'
-    #   displayName: 'show current dir & Compile SASS assets'
+
+    - script: |
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        nvm use 16
+        ./node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot
+      displayName: 'Compile SASS assets'
 
     - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
       displayName: 'Write build info into file'
