@@ -33,13 +33,10 @@ steps:
         export PATH="$NVM_DIR/versions/node/v16.*/bin:$PATH"
         node -v
         npm -v
-      displayName: 'Use Node.js 16 and verify version'
-
-    - script: |
         rm -rf node_modules package-lock.json
         npm cache clean --force
         npm install
-      displayName: 'Clean and install npm dependencies'
+      displayName: 'Use Node.js 16 and verify version and try to install npm packages'
 
     - script: |
         echo "Current PATH:"
