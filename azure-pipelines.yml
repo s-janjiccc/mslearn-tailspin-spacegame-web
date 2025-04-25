@@ -4,67 +4,67 @@ trigger:
 
 pool:
   name: 'Default'
-    
+
 variables:
-    buildConfiguration: 'Release'
-    wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
-    dotnetSdkVersion: '6.x'
+  buildConfiguration: 'Release'
+  wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
+  dotnetSdkVersion: '6.x'
 
 steps:
-    - task: UseDotNet@2
-      displayName: 'Use .NET SDK $(dotnetSdkVersion)'
-      inputs:
-        packageType: sdk
-        version: '$(dotnetSdkVersion)'
+  # Use .NET SDK
+  - task: UseDotNet@2
+    displayName: 'Use .NET SDK $(dotnetSdkVersion)'
+    inputs:
+      packageType: sdk
+      version: '$(dotnetSdkVersion)'
 
-    - script: |
-        export NVM_DIR="$HOME/.nvm"
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-        nvm install 16
-        nvm use 16
-        export PATH="$NVM_DIR/versions/node/v16.*/bin:$PATH"
-        node -v
-        npm -v
-        rm -rf node_modules package-lock.json
-        npm cache clean --force
-        export PYTHON=/opt/homebrew/bin/python3.11
-        npm install
-      displayName: 'Use Node.js 16, verify version, try to install npm packages, compile sass assets'
+  # Setup Node.js and install dependencies
+  - script: |
+      export NVM_DIR="$HOME/.nvm"
+      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+      nvm install 16
+      nvm use 16
+      export PATH="$NVM_DIR/versions/node/v16.*/bin:$PATH"
+      node -v
+      npm -v
+      rm -rf node_modules package-lock.json
+      npm cache clean --force
+      npm install
+    displayName: 'Setup Node.js 16 and install dependencies'
 
-    # list current directory and node_modules/.bin directory
-    - script: |
-        ls
-        ls -la ./node_modules/.bin
-      displayName: 'List current and node_modules/.bin directory'
+  # Compile SASS assets
+  - script: |
+      export NVM_DIR="$HOME/.nvm"
+      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+      nvm use 16
+      ./node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)
+      npx gulp
+    displayName: 'Compile SASS assets'
 
-    # ensure node 16 to use build node-sass and run gulp
-    - script: |
-        export NVM_DIR="$HOME/.nvm"
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-        nvm use 16
-        ./node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)
-        npx gulp
-      displayName: 'Compile SASS assets'
+  # Write build info
+  - script: |
+      echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt
+    displayName: 'Write build info into file'
+    workingDirectory: $(wwwrootDir)
 
-    - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
-      displayName: 'Write build info into file'
-      workingDirectory: $(wwwrootDir)
+  # Restore .NET dependencies
+  - task: DotNetCoreCLI@2
+    displayName: 'Restore .NET dependencies'
+    inputs:
+      command: 'restore'
+      projects: '**/*.csproj'
 
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore .NET dependencies'
-      inputs:
-        command: 'restore'
-        projects: '**/*.csproj'
+  # Build and publish using templates
+  - template: templates/build.yml
+    parameters:
+      buildConfiguration: 'Debug'
 
-    - template: templates/build.yml
-      parameters:
-        buildConfiguration: 'Debug'
+  - template: templates/build.yml
+    parameters:
+      buildConfiguration: 'Release'
 
-    - template: templates/build.yml
-      parameters:
-        buildConfiguration: 'Release'
-
-    # publish the artifacts
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish artifacts: drop'
-      condition: succeeded()
+  # Publish artifacts
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish artifacts: drop'
+    condition: succeeded()
+    
