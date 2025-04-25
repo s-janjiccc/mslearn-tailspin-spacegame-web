@@ -56,21 +56,13 @@ steps:
         command: 'restore'
         projects: '**/*.csproj'
 
-    - task: DotNetCoreCLI@2
-      displayName: 'Build .NET project'
-      inputs:
-        command: 'build'
-        projects: '**/*.csproj'
-        arguments: '--no-restore --configuration $(buildConfiguration)' # buildConfiguration is defined above in variables
+    - template: templates/build.yml
+      parameters:
+        buildConfiguration: 'Debug'
 
-    # publish the project as zip
-    - task: DotNetCoreCLI@2
-      displayName: 'Publish .NET project'
-      inputs:
-        command: 'publish'
-        publishWebProjects: false
-        arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
-        zipAfterPublish: true
+    - template: templates/build.yml
+      parameters:
+        buildConfiguration: 'Release'
 
     # publish the artifacts
     - task: PublishBuildArtifacts@1
