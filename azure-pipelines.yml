@@ -19,9 +19,11 @@ steps:
         version: '6.x'
 
     - script: |
+        python3 -m venv venv
+        source venv/bin/activate
         python3 -m ensurepip --upgrade
         python3 -m pip install --upgrade pip setuptools
-      displayName: 'Install Python distutils'
+      displayName: 'Set up Python virtual environment and install distutils'
 
     - script: |
         export NVM_DIR="$HOME/.nvm"
