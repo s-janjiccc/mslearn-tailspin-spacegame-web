@@ -1,9 +1,9 @@
 trigger:
-- main
+- '*'
+#- main
 
 pool:
-    name: 'Default'
-    #vmImage: ubuntu-latest
+  name: 'Default'
     
 variables:
     buildConfiguration: 'Release'
@@ -14,17 +14,35 @@ steps:
       inputs:
         packageType: sdk
         version: '6.x'
-    
-    - task: Npm@1
-      displayName: 'Run npm install'
-      inputs:
-        verbose: false
 
-    - script: './node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot'
-      displayName: 'Compile Sass assets'
+    - script: |
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        nvm install 16
+        nvm use 16
+        export PATH="$NVM_DIR/versions/node/v16.*/bin:$PATH"
+        node -v
+        npm -v
+        rm -rf node_modules package-lock.json
+        npm cache clean --force
+        export PYTHON=/opt/homebrew/bin/python3.11
+        npm install
+      displayName: 'Use Node.js 16, verify version, try to install npm packages, compile sass assets'
 
-    - task: gulp@1
-      displayName: 'Run gulp tasks'
+    # list current directory and node_modules/.bin directory
+    - script: |
+        ls
+        ls -la ./node_modules/.bin
+      displayName: 'List current and node_modules/.bin directory'
+
+    # ensure node 16 to use build node-sass and run gulp
+    - script: |
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        nvm use 16
+        ./node_modules/.bin/node-sass Tailspin.SpaceGame.Web/wwwroot --output Tailspin.SpaceGame.Web/wwwroot
+        npx gulp
+      displayName: 'Compile SASS assets'
 
     - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
       displayName: 'Write build info into file'
