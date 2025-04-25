@@ -18,7 +18,11 @@ steps:
         packageType: sdk
         version: '6.x'
 
-    - script: 'nvm use 16'
+    - script: |
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        nvm install 16
+        nvm use 16
       displayName: 'Use Node.js 16'
 
     - script: 'rm -rf node_modules package-lock.json'
