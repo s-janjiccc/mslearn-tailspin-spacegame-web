@@ -17,7 +17,13 @@ steps:
       inputs:
         packageType: sdk
         version: '6.x'
-    
+
+    - script: 'nvm use 16'
+      displayName: 'Use Node.js 16'
+
+    - script: 'rm -rf node_modules package-lock.json'
+      displayName: 'Remove node_modules and package-lock.json'
+
     - task: Npm@1
       displayName: 'Run npm install'
       inputs:
