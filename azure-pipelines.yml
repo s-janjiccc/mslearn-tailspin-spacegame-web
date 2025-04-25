@@ -60,3 +60,17 @@ steps:
         command: 'build'
         projects: '**/*.csproj'
         arguments: '--no-restore --configuration $(buildConfiguration)' # buildConfiguration is defined above in variables
+
+    # publish the project as zip
+    - task: DotNetCoreCLI@2
+      displayName: 'Publish .NET project'
+      inputs:
+        command: 'publish'
+        publishWebProjects: false
+        arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
+        zipAfterPublish: true
+
+    # publish the artifacts
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish artifacts: drop'
+      condition: succeeded()
