@@ -24,8 +24,18 @@ steps:
         nvm install 16
         nvm use 16
         export PATH="$NVM_DIR/versions/node/v16.*/bin:$PATH"
+        echo "Node.js version:"
         node -v
+        echo "NPM version:"
+        npm -v
       displayName: 'Use Node.js 16 and verify version'
+
+    - script: |
+        echo "Current PATH:"
+        echo $PATH
+        which node
+        which npm
+      displayName: 'Debug Node.js Environment'
 
     - script: 'rm -rf node_modules package-lock.json'
       displayName: 'Remove node_modules and package-lock.json'
